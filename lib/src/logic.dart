@@ -1,6 +1,6 @@
 part of 'store.dart';
 
-abstract class Logic<State, Action> {
+abstract class LogicCompatible<State, Action> {
   State get state;
   Future<Effect<Action>?> reduce(Action action);
 }

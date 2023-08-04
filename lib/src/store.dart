@@ -5,15 +5,15 @@ part 'logic.dart';
 
 class Store<State extends StateCompatible<State>, Action> {
   Store({
-    required Logic<State, Action> Function() initialLogic,
+    required LogicCompatible<State, Action> Function() initialLogic,
     List<MiddlewareCompatible<State, Action>> middleware = const [],
   })  : _logic = initialLogic(),
         _middleware = middleware {
     _previousState = _logic.state.copy();
   }
 
-  final Logic<State, Action> _logic;
-  Logic<State, Action> get logic => _logic;
+  final LogicCompatible<State, Action> _logic;
+  LogicCompatible<State, Action> get logic => _logic;
   late State _previousState;
 
   /// Middleware is a function that takes a `Store`'s state and an `Action`, and may
@@ -45,6 +45,9 @@ class Store<State extends StateCompatible<State>, Action> {
 
   void _dispatch(State state) {
     final info = StateChangedInfo(_previousState, state, state.diff(_previousState));
+    if (info.changes.isEmpty) {
+      return;
+    }
     _stateStreamController.add(info);
     _previousState = state.copy();
   }

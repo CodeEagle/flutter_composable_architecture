@@ -35,7 +35,7 @@ class LoggingMiddleware extends MiddlewareCompatible<AppState, AppAction> {
   }
 }
 
-class AppLogic extends Logic<AppState, AppAction> {
+class AppLogic extends LogicCompatible<AppState, AppAction> {
   AppLogic();
 
   late final subSystemLogic = SubSystemLogic(state);
@@ -83,7 +83,7 @@ abstract class AppAction {
   const AppAction();
 }
 
-class SubSystemLogic extends Logic<SubSystemState, SubSystemAction> {
+class SubSystemLogic extends LogicCompatible<SubSystemState, SubSystemAction> {
   SubSystemLogic(this.appState);
 
   @override
