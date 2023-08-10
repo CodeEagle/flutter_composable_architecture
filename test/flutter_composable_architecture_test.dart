@@ -29,7 +29,7 @@ class LoggingMiddleware extends MiddlewareCompatible<AppState, AppAction> {
   const LoggingMiddleware();
 
   @override
-  Future<AppAction> reduce(AppAction action, AppState state) async {
+  Future<AppAction> beforeReduce(AppAction action, AppState state) async {
     debugPrint('Action: $action');
     return action;
   }
@@ -83,11 +83,15 @@ abstract class AppAction {
   const AppAction();
 }
 
-class SubSystemLogic extends LogicCompatible<SubSystemState, SubSystemAction> {
+class OtherAppAction extends AppAction {
+  const OtherAppAction();
+}
+
+class SubSystemLogic extends LogicCompatible<SubSystemState, AppAction> {
   SubSystemLogic(this.appState);
 
   @override
-  Future<Effect<SubSystemAction>?> reduce(SubSystemAction action) async {
+  Future<Effect<AppAction>?> reduce(AppAction action) async {
     switch (action.runtimeType) {
       case DeviceConnectAction:
         state.connected = true;
@@ -96,7 +100,7 @@ class SubSystemLogic extends LogicCompatible<SubSystemState, SubSystemAction> {
         state.connected = false;
         break;
     }
-    return null;
+    return Effect.action(const OtherAppAction());
   }
 
   final AppState appState;
