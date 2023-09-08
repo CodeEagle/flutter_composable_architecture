@@ -5,7 +5,7 @@ part 'logic.dart';
 
 typedef StoreDispatcher<Action> = Future<void> Function(Action action);
 
-class Store<State extends StateCompatible<State>, Action> {
+class Store<State extends StateCompatible<State, ChangeEvent>, Action, ChangeEvent> {
   Store({
     required LogicCompatible<State, Action> Function() initialLogic,
     List<MiddlewareCompatible<State, Action>> middleware = const [],
@@ -24,8 +24,9 @@ class Store<State extends StateCompatible<State>, Action> {
   /// fed back into the `Store`.
   late final List<MiddlewareCompatible<State, Action>> _middleware;
 
-  final StreamController<StateChangedInfo<State>> _stateStreamController = StreamController.broadcast(sync: true);
-  Stream<StateChangedInfo<State>> get stateStream => _stateStreamController.stream;
+  final StreamController<StateChangedInfo<State, ChangeEvent>> _stateStreamController =
+      StreamController.broadcast(sync: true);
+  Stream<StateChangedInfo<State, ChangeEvent>> get stateStream => _stateStreamController.stream;
 
   Future<void> send(Action action) async {
     final effect = await _processAction(action);
@@ -69,16 +70,16 @@ class Store<State extends StateCompatible<State>, Action> {
   }
 }
 
-class StateChangedInfo<State> {
+class StateChangedInfo<State, ChangeEvent> {
   final State previous;
   final State current;
-  final List changes;
+  final List<ChangeEvent> changes;
   const StateChangedInfo(this.previous, this.current, this.changes);
 }
 
-abstract class StateCompatible<T extends StateCompatible<T>> {
+abstract class StateCompatible<T extends StateCompatible<T, C>, C> {
   const StateCompatible();
-  List diff(T old);
+  List<C> diff(T old);
   T copy();
 }
 

@@ -6,6 +6,13 @@ class Effect<Action> {
   final bool dispatchChanged;
   final Future<Action?> Function(StoreDispatcher<Action>)? action;
 
-  Effect.action(Action action, {bool dispatchChanged = false})
-      : this(action: (dispatcher) async => action, dispatchChanged: dispatchChanged);
+  Effect.action(Action action, {bool dispatchChanged = false, Duration? delay})
+      : this(
+            action: (dispatcher) async {
+              if (delay != null) {
+                await Future.delayed(delay);
+              }
+              return action;
+            },
+            dispatchChanged: dispatchChanged);
 }

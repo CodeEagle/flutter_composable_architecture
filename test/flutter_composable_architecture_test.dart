@@ -52,7 +52,7 @@ class AppLogic extends LogicCompatible<AppState, AppAction> {
   AppState state = AppState();
 }
 
-class AppState extends StateCompatible<AppState> {
+class AppState extends StateCompatible<AppState, String> {
   SubSystemState subSystemState = SubSystemState();
 
   AppState copyWith({
@@ -62,7 +62,7 @@ class AppState extends StateCompatible<AppState> {
   }
 
   @override
-  List diff(old) {
+  List<String> diff(old) {
     final subSystemStateChanges = subSystemState.diff(old.subSystemState);
 
     return [
@@ -109,7 +109,7 @@ class SubSystemLogic extends LogicCompatible<SubSystemState, AppAction> {
   SubSystemState get state => appState.subSystemState;
 }
 
-class SubSystemState extends StateCompatible<SubSystemState> {
+class SubSystemState extends StateCompatible<SubSystemState, String> {
   bool connected = false;
 
   SubSystemState copyWith({
@@ -119,8 +119,8 @@ class SubSystemState extends StateCompatible<SubSystemState> {
   }
 
   @override
-  List diff(old) {
-    List<Object> changed = [];
+  List<String> diff(old) {
+    List<String> changed = [];
     if (old.connected != connected) {
       changed.add('connected');
     }
